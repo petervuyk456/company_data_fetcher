@@ -15,23 +15,22 @@ class FMPReader:
 
         self._ticker = ticker
 
-    def _get_dict(self, req):
-
-        if req in STATEMENTS:
-            subfield = STATEMENTS[req]['field'][0]
-        elif req in METRICS:
-            subfield = METRICS[req]['field'][0]
-        else:
-            raise ValueError('req_type must be a member of REQ_TYPES (see fmp.constants)')
+    def _get_dict(self, req, subfield=None):
 
         try:
             res = self._send_request(req)[0]
         except KeyError:
             res = self._send_request(req)
 
+        if subfield is not None:
+            res = res[subfield]
+
+        if type(res) == list:
+            res = res[0]
+
         return {key: [] for key in res}
 
-    def _send_request(self, req, period='annual'):
+    def _send_request(self, req, period='annual', subfield=None):
         """
         ticker must be a single ticker i.e. 'AAPL, GOOG, GM
         req_type:
@@ -51,22 +50,23 @@ class FMPReader:
             period = 'annual'
 
         ext = REQ_TYPES[req]['ext']
-        subfield = REQ_TYPES[req]['field'][0]
 
         if period == 'annual':
             url = f'{BASE_URL}{ext}/{self.ticker}'
-            res = requests.get(url).json()[subfield]
+            res = requests.get(url).json()
         elif period == 'quarter':
             url = f'{BASE_URL}{ext}/{self.ticker}?period=quarter'
-            res = requests.get(url).json()[subfield]
+            res = requests.get(url).json()
         elif period == 'both':
-            annual = self._send_request(req, 'annual')
-            quarter = self._send_request(req, 'quarter')
-
-            res = annual + quarter
+            subfield = REQ_TYPES[req]['field'][0]
+            annual = self._send_request(req, 'annual')[subfield]
+            quarter = self._send_request(req, 'quarter')[subfield]
+            return annual + quarter
         else:
             raise ValueError('period must be "annual", "quarter", or "both". Default is "annual".')
 
+        if subfield is not None:
+            res = res[subfield]
         return res
 
     @property

@@ -8,7 +8,7 @@ class Company:
     _cash_flow_statement = []
     _profile = []
     _ratios = []
-    _value = []
+    _enterprise_value = []
     _key_metrics = []
     _financial_growth = []
     _company_rating = []
@@ -48,4 +48,34 @@ class Company:
         return self._profile
 
     def financial_ratios(self):
-        pass
+        if not self._ratios:
+            self._ratios = self.__metrics.get_metric('ratio')
+
+        return self._ratios
+
+    def key_metrics(self):
+        if not self._key_metrics:
+            self._key_metrics = self.__metrics.get_metric('metric')
+
+        return self._key_metrics
+
+    def enterprise_value(self):
+        if not self._enterprise_value:
+            self._enterprise_value = self.__metrics.get_metric('value')
+
+        return self._enterprise_value
+
+    def financial_growth(self):
+        if not self._financial_growth:
+            self._financial_growth = self.__metrics.get_metric('growth')
+
+        return self._financial_growth
+
+    def company_rating(self):
+        if not self._company_rating:
+            rating = self.__metrics.get_metric('rating').iloc[:, -2:]
+            overall_rating = rating['rating'][0].pop('rating')
+            rating['ratingDetails'][0]['rating'] = overall_rating
+            self._company_rating = {'overall_rating': overall_rating, 'ratings': pd.DataFrame.from_dict(rating['ratingDetails'][0])}
+
+        return self._company_rating

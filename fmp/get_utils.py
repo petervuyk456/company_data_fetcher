@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 
 def get_legend(csv_name):
     """
-    Get legend of all SIC codes, ticker, etc. from rankandfiled.com csv
+    Get legend of all SIC codes, ticker, etc. from rank and filed.com csv
     """
     if platform.system() == 'Windows':
         legend_path = os.getcwd() + '\\references\\raf_ticker_data.pkl'
@@ -61,7 +61,7 @@ def get_ticker_info(tickers="all"):
 
 def get_sp500_tickers():
     """
-    Get S&P500 tickers from Wikipedia
+    Get S&P500 tickers from Wiki
     """
 
     url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
@@ -91,7 +91,6 @@ def get_all_tickers(as_df=True):
 
 
 def create_report(df_dict, name="default"):
-
     writer = pd.ExcelWriter(f'{name}.xlsx')
     for name, df in df_dict.items():
         df.to_excel(writer, name)

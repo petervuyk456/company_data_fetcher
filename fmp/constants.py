@@ -26,7 +26,7 @@ METRICS = {
         'quarter': False,
         'field': ['profile'],
     },
-    'metrics': {
+    'metric': {
         'ext': 'company-key-metrics',
         'quarter': True,
         'field': ['metrics'],
@@ -36,7 +36,7 @@ METRICS = {
         'quarter': False,
         'field': ['rating', 'ratingDetails'],
     },
-    'ratios': {
+    'ratio': {
         'ext': 'financial-ratios',
         'quarter': False,
         'field': ['ratios'],

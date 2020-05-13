@@ -53,10 +53,17 @@ class CompanyData(FMPReader):
         elif self._check_period(period):
             self.period = period
 
-        dict_ = self._get_dict(req_type)
-        reports = self._send_request(req_type, period)
+        subfields = REQ_TYPES[req_type]['field']
 
-        if self._data_type == 'statement':
+        if len(subfields) == 1:
+            subfield = subfields[0]
+        else:
+            subfield = None
+
+        reports = self._send_request(req_type, period, subfield)
+        dict_ = self._get_dict(req_type, subfield)
+
+        if self.data_type == 'statement':
             for doc in reports:
                 for field in dict_:
                     if field in doc and bool(doc[field]):
@@ -65,10 +72,17 @@ class CompanyData(FMPReader):
                         dict_[field].append('')
         else:
             for field in dict_:
-                if field in reports and bool(reports[field]):
-                    dict_[field].append(reports[field])
+                if type(reports) == list and len(reports) > 1:
+                    for report in reports:
+                        if field in report and bool(report[field]):
+                            dict_[field].append(report[field])
+                        else:
+                            dict_[field].append('')
                 else:
-                    dict_[field].append('')
+                    if field in reports and bool(reports[field]):
+                        dict_[field].append(reports[field])
+                    else:
+                        dict_[field].append('')
 
         return pd.DataFrame.from_dict(dict_)
 
@@ -127,6 +141,11 @@ class Metric(CompanyData):
 
         if metric_type == 'profile':
             metric = metric.loc[0, :]
+
+        # TODO: incorporate yfinance for building out profile with
+        # info, sustainability, major_holders, institutional holders, splits/dividends
+        # yfin_data = Ticker(self.ticker)
+        # pd.read_json(yfin_data.info)
 
         self.__metric = metric
 
