@@ -59,11 +59,6 @@ class FMPReader:
             url = f'{BASE_URL}{ext}/{self.ticker}?period=quarter'
             with requests.Session() as s:
                 res = s.get(url).json()
-        elif period == 'both':
-            subfield = REQ_TYPES[req]['field'][0]
-            annual = self._send_request(req, 'annual')[subfield]
-            quarter = self._send_request(req, 'quarter')[subfield]
-            return annual + quarter
         else:
             raise ValueError('period must be "annual", "quarter", or "both". Default is "annual".')
 

@@ -61,31 +61,42 @@ class CompanyData(FMPReader):
         else:
             subfield = None
 
-        reports = self._send_request(req_type, period, subfield)
         dict_ = self._get_dict(req_type, subfield)
-
-        if self.data_type == 'statement':
-            for doc in reports:
-                for field in dict_:
-                    if field in doc and bool(doc[field]):
-                        dict_[field].append(doc[field])
-                    else:
-                        dict_[field].append('')
+        if period == "both":
+            annual = CompanyData.doc2dict(self._send_request(req_type, 'annual', subfield), dict_, self._data_type)
+            quarter = CompanyData.doc2dict(self._send_request(req_type, 'quarter', subfield), dict_, self._data_type)
+            annual['Period'] = 'A'
+            quarter['Period'] = 'Q'
+            reports = annual.append(quarter).sort_values(by=['date'], ascending=False)
         else:
-            for field in dict_:
+            reports = CompanyData.doc2dict(self._send_request(req_type, period, subfield), dict_, self._data_type)
+
+        return reports
+
+    @staticmethod
+    def doc2dict(reports, fields, data_type):
+        if data_type == 'statement':
+            for doc in reports:
+                for field in fields:
+                    if field in doc and bool(doc[field]):
+                        fields[field].append(doc[field])
+                    else:
+                        fields[field].append('')
+        else:
+            for field in fields:
                 if type(reports) == list and len(reports) > 1:
                     for report in reports:
                         if field in report and bool(report[field]):
-                            dict_[field].append(report[field])
+                            fields[field].append(report[field])
                         else:
-                            dict_[field].append('')
+                            fields[field].append('')
                 else:
                     if field in reports and bool(reports[field]):
-                        dict_[field].append(reports[field])
+                        fields[field].append(reports[field])
                     else:
-                        dict_[field].append('')
+                        fields[field].append('')
 
-        return pd.DataFrame.from_dict(dict_)
+        return pd.DataFrame.from_dict(fields)
 
     @staticmethod
     def __get_type(req_type):

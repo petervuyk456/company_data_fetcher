@@ -1,6 +1,8 @@
 from fmp.request_types import *
+from fmp.get_utils import create_report
 from datetime import datetime
 import time
+
 
 class Company:
 
@@ -93,3 +95,28 @@ class Company:
             self._price_history = self.__metrics.get_metric('price')
 
         return self._price_history
+
+    def generate_report(self, type_='full'):
+        if type_ == 'full':
+            print('Profile\n', self.profile())
+            print('Company Rating\n', self.company_rating()['ratings'])
+            print('Income Statement\n', self.income_statement().head())
+            print('Balance Sheet\n', self.balance_sheet().head())
+            print('Cash Flow Statement\n', self.cash_flow_statement().head())
+            print('Price History\n', self.price_history().head())
+            print('Financial Growth\n', self.financial_growth().head())
+            print('Financial Ratios\n', self.financial_ratios().head())
+            print('Key Metrics\n', self.key_metrics().head())
+            print('Enterprise Value\n', self.enterprise_value().head())
+        elif type_ == 'statements':
+            print('Income Statement\n', self.income_statement().head())
+            print('Balance Sheet\n', self.balance_sheet().head())
+            print('Cash Flow Statement\n', self.cash_flow_statement().head())
+        elif type_ == 'metrics':
+            print('Price History\n', self.price_history().head())
+            print('Financial Growth\n', self.financial_growth().head())
+            print('Financial Ratios\n', self.financial_ratios().head())
+            print('Key Metrics\n', self.key_metrics().head())
+            print('Enterprise Value\n', self.enterprise_value().head())
+        else:
+            raise ValueError('type_ arg must be in ["full", "statements", "metrics"]')
