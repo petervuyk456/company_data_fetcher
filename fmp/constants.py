@@ -56,6 +56,11 @@ METRICS = {
         'quarter': True,
         'field': ['dcf', 'Stock Price'],
     },
+    'price': {
+        'ext': 'historical-price-full',
+        'quarter': False,
+        'field': ['historical'],
+    },
 }
 
 REQ_TYPES = {

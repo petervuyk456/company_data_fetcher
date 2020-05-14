@@ -1,5 +1,6 @@
 from fmp.request_types import *
-
+from datetime import datetime
+import time
 
 class Company:
 
@@ -12,12 +13,14 @@ class Company:
     _key_metrics = []
     _financial_growth = []
     _company_rating = []
+    _price_history = []
 
     def __init__(self, ticker):
         self.__ticker = ticker
 
         self.__statement = Statement(ticker)
         self.__metrics = Metric(ticker)
+        self.__stock_price = StockPrice(ticker)
 
     @property
     def ticker(self):
@@ -79,3 +82,14 @@ class Company:
             self._company_rating = {'overall_rating': overall_rating, 'ratings': pd.DataFrame.from_dict(rating['ratingDetails'][0])}
 
         return self._company_rating
+
+    def generate_ticker_stream(self):
+        for quote in self.__stock_price.data_generator():
+            print(f'{datetime.now().strftime("%m/%d %H:%M:%S")} {quote}')
+            time.sleep(7)
+
+    def price_history(self):
+        if not self._price_history:
+            self._price_history = self.__metrics.get_metric('price')
+
+        return self._price_history

@@ -2,7 +2,8 @@ import pandas as pd
 
 from fmp.FMPReader import FMPReader
 from fmp.constants import *
-
+from fmp.get_utils import get_all_tickers
+import requests
 
 class CompanyData(FMPReader):
 
@@ -150,3 +151,27 @@ class Metric(CompanyData):
         self.__metric = metric
 
         return self.__metric
+
+
+class StockPrice:
+
+    __statement = []
+    _ticker = ''
+
+    def __init__(self, ticker):
+        self.ticker = ticker
+
+    def data_generator(self):
+        url = f'https://financialmodelingprep.com/api/v3/stock/real-time-price/{self.ticker}'
+        for i in range(0, 10):
+            with requests.Session() as s:
+                yield s.get(url, stream=True).json()['price']
+
+    @property
+    def ticker(self):
+        return self._ticker
+
+    @ticker.setter
+    def ticker(self, ticker):
+        if ticker in get_all_tickers(False):
+            self._ticker = ticker
