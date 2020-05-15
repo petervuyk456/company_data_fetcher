@@ -1,5 +1,5 @@
-from fmp.request_types import *
-from fmp.get_utils import create_report
+from fmp.company import *
+from fmp.utils import create_report
 from datetime import datetime
 import time
 

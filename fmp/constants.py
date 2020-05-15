@@ -2,6 +2,34 @@ BASE_URL = 'https://financialmodelingprep.com/api/v3/'
 
 PERIODS = ['annual', 'quarter', 'both']
 
+FUNDS = {
+    'etf': {
+        'ext': 'historical-price-full/etf',
+        'available': 'etfs'
+    },
+    'commodity': {
+        'ext': 'historical-price-full/commodity',
+        'available': 'commodities'
+    },
+    'index': {
+        'ext': 'historical-price-full/index',
+        'available': 'indexes'
+    },
+    'euro_next': {
+        'ext': 'historical-price-full/euronext ',
+        'available': 'euronext'
+
+    },
+    'mutual_fund': {
+        'ext': 'historical-price-full/mutual_fund',
+        'available': 'mutual-funds'
+    },
+    'stock': {
+        'ext': 'historical-price-full',
+        'available': ''
+    },
+}
+
 STATEMENTS = {
     'income': {
         'ext': 'financials/income-statement',
@@ -66,4 +94,5 @@ METRICS = {
 REQ_TYPES = {
     **METRICS,
     **STATEMENTS,
+    **FUNDS,
 }

@@ -95,3 +95,28 @@ def create_report(df_dict, name="default"):
     for name, df in df_dict.items():
         df.to_excel(writer, name)
     writer.save()
+
+
+def dict2df(reports, fields, data_type):
+    if data_type == 'statement':
+        for doc in reports:
+            for field in fields:
+                if field in doc and bool(doc[field]):
+                    fields[field].append(doc[field])
+                else:
+                    fields[field].append('')
+    else:
+        for field in fields:
+            if type(reports) == list and len(reports) > 1:
+                for report in reports:
+                    if field in report and bool(report[field]):
+                        fields[field].append(report[field])
+                    else:
+                        fields[field].append('')
+            else:
+                if field in reports and bool(reports[field]):
+                    fields[field].append(reports[field])
+                else:
+                    fields[field].append('')
+
+    return pd.DataFrame.from_dict(fields)

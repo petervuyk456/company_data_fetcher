@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 from fmp.constants import *
-from fmp.get_utils import get_all_tickers
+from fmp.utils import get_all_tickers
 
 
 class FMPReader:
@@ -10,12 +10,12 @@ class FMPReader:
 
     def __init__(self, ticker):
 
-        if ticker not in get_all_tickers(False):
-            raise ValueError('ticker must be a member of get_all_tickers(as_df=False)')
+        # if ticker not in get_all_tickers(False):
+        #     raise ValueError('ticker must be a member of get_all_tickers(as_df=False)')
 
         self._ticker = ticker
 
-    def _get_dict(self, req, subfield=None):
+    def _get_fields(self, req, subfield=None):
 
         try:
             res = self._send_request(req)[0]
@@ -30,7 +30,7 @@ class FMPReader:
 
         return {key: [] for key in res}
 
-    def _send_request(self, req, period='annual', subfield=None):
+    def _send_request(self, req, period='annual', subfield=None, ticker=None):
         """
         ticker must be a single ticker i.e. 'AAPL, GOOG, GM
         req_type:
@@ -46,17 +46,24 @@ class FMPReader:
         if period not in PERIODS:
             raise ValueError('period must be a member of PERIODS (see constants.py)')
 
-        if not REQ_TYPES[req]['quarter']:
-            period = 'annual'
+        if ticker is None:
+            ticker = self.ticker
+
+        if req in FUNDS:
+            if req == 'index':
+                ticker = '%5E' + ticker
+        else:
+            if not REQ_TYPES[req]['quarter']:
+                period = 'annual'
 
         ext = REQ_TYPES[req]['ext']
 
         if period == 'annual':
-            url = f'{BASE_URL}{ext}/{self.ticker}'
+            url = f'{BASE_URL}{ext}/{ticker}'
             with requests.Session() as s:
                 res = s.get(url).json()
         elif period == 'quarter':
-            url = f'{BASE_URL}{ext}/{self.ticker}?period=quarter'
+            url = f'{BASE_URL}{ext}/{ticker}?period=quarter'
             with requests.Session() as s:
                 res = s.get(url).json()
         else:

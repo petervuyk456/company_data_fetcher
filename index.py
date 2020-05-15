@@ -7,9 +7,14 @@
 # TODO: build out frontend with plotly dash
 
 from company import Company
+from fund import Fund
 
 if __name__ == '__main__':
-    cmi = Company('AAPL')
-    cmi.generate_report('full')
+    # holdings = ['AAPL', 'CMI']
+    # companies = {holding: Company(holding) for holding in holdings}
+    #
+    # for company in companies.values():
+    #     company.generate_report('full')
 
-
+    sp500 = Fund(ticker='GSPC', fund='index')
+    print(sp500.market_index())
