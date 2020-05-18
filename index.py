@@ -6,15 +6,7 @@
 # TODO: implement machine learning on data for predicting stock prices, company growth, buy/sell, etc.
 # TODO: build out frontend with plotly dash
 
-from company import Company
-from fund import Fund
+from Market_Data_Explorer.app import start_app
 
 if __name__ == '__main__':
-    # holdings = ['AAPL', 'CMI']
-    # companies = {holding: Company(holding) for holding in holdings}
-    #
-    # for company in companies.values():
-    #     company.generate_report('full')
-
-    sp500 = Fund(ticker='GSPC', fund='index')
-    print(sp500.market_index())
+    start_app()
